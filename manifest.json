@@ -1,0 +1,27 @@
+{
+  "schema": 4,
+  "tags": ["abyss", "notes", "knowledge-graph"],
+  "ui": {
+    "bundle": {
+      "format": "static-spa",
+      "entry": "index.html",
+      "external_origins": ["https://api.github.com", "https://raw.githubusercontent.com"]
+    },
+    "views": [
+      {
+        "name": "main",
+        "title": "Abyss",
+        "default": true,
+        "default_size": { "w": 1200, "h": 780 },
+        "min_size": { "w": 720, "h": 480 }
+      }
+    ],
+    "csp_overrides": {},
+    "state_merge": "last_writer_wins"
+  },
+  "dev": {
+    "fixtures": ["fixtures/*.jsonl"],
+    "seed_storage": {},
+    "user_id": 1
+  }
+}

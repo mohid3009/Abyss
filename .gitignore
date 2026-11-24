@@ -1,0 +1,7 @@
+node_modules/
+bundle/
+scripts/out/
+.claude/
+.DS_Store
+*.log
+.anna/

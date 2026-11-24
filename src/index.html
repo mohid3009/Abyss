@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Abyss · Notes that answer back</title>
+    <meta name="description" content="Linked markdown notes with cited answers from your own notes, AI capture and an Obsidian style knowledge graph." />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <script src="./main.js" type="module"></script>
+  </head>
+  <body>
+    <div id="splash" aria-hidden="true">
+      <div class="splash-stage">
+        <svg class="splash-mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4">
+          <circle class="sp-pulse" cx="16" cy="16" r="13" />
+          <circle class="sp-ring sp-1" cx="16" cy="16" r="13" />
+          <circle class="sp-ring sp-2" cx="16" cy="16" r="8" />
+          <g class="sp-orbit sp-o1"><circle cx="29" cy="16" r="1.6" fill="currentColor" stroke="none" /></g>
+          <g class="sp-orbit sp-o2"><circle cx="8" cy="16" r="1.3" fill="currentColor" stroke="none" /></g>
+          <circle class="sp-dot" cx="16" cy="16" r="3" fill="currentColor" stroke="none" />
+        </svg>
+      </div>
+      <span class="splash-word title-2"><span style="--i:0">A</span><span style="--i:1">b</span><span style="--i:2">y</span><span style="--i:3">s</span><span style="--i:4">s</span></span>
+      <span class="splash-tag caption-2">Notes that answer back</span>
+    </div>
+    <a class="skip-link button-sm" href="#main">Skip to content</a>
+
+    <nav id="sidebar" aria-label="Notes">
+      <header class="brand">
+        <span class="logo" data-icon="logo" aria-hidden="true"></span>
+        <span class="title-3">Abyss</span>
+        <button id="sidebar-toggle" class="btn-icon" type="button" data-icon="sidebar" aria-label="Collapse sidebar" aria-expanded="true" aria-controls="sidebar" title="Collapse sidebar (Ctrl+B)"></button>
+        <button id="new-note" class="btn-icon" type="button" data-icon="plus" aria-label="New note" title="New note"></button>
+      </header>
+
+      <div class="nav-items">
+        <button id="show-ask" class="nav-item button-sm" title="Ask your notes" type="button" data-icon="ask" aria-pressed="false">Ask</button>
+        <button id="show-capture" class="nav-item button-sm" title="Capture a note" type="button" data-icon="capture" aria-pressed="false">Capture</button>
+        <button id="show-graph" class="nav-item button-sm" title="Open the graph" type="button" data-icon="graph" aria-pressed="false">Graph</button>
+      </div>
+
+      <label class="search field" data-icon="search">
+        <input id="search" class="body-6" type="search" placeholder="Search titles and #tags" aria-label="Search notes" />
+      </label>
+
+      <h2 class="section-label caption-3">Notes</h2>
+      <ul id="note-list" aria-label="Notes" aria-busy="true">
+        <li class="skeleton-row"><span class="skeleton"></span></li>
+        <li class="skeleton-row"><span class="skeleton"></span></li>
+        <li class="skeleton-row"><span class="skeleton"></span></li>
+        <li class="skeleton-row"><span class="skeleton"></span></li>
+        <li class="skeleton-row"><span class="skeleton"></span></li>
+      </ul>
+
+      <footer class="sidebar-foot">
+        <div class="io">
+          <button id="import" class="btn btn-quiet button-sm" type="button" data-icon="upload" title="Import an Obsidian vault as a .zip, or drop it anywhere">Import</button>
+          <button id="export" class="btn btn-quiet button-sm" type="button" data-icon="download" title="Download every note as a .zip for Obsidian">Export</button>
+          <input id="import-file" type="file" accept=".zip,application/zip" hidden />
+          <button id="replay-tour" class="btn btn-quiet button-sm" type="button" data-icon="question" title="Replay the quick tour">Tutorial</button>
+          <button id="import-github" class="btn btn-quiet button-sm" type="button" data-icon="github" title="Import a public GitHub repository of markdown notes">GitHub</button>
+        </div>
+        <form id="gh-form" class="gh-form" hidden novalidate>
+          <label class="field"><input id="gh-input" class="body-6" autocomplete="off" aria-label="GitHub repository" placeholder="owner/repo or owner/repo@branch" /></label>
+          <button class="btn btn-primary button-sm" type="submit">Import</button>
+          <p id="gh-error" class="field-error caption-2" role="alert" hidden></p>
+        </form>
+        <div class="foot-row">
+          <span id="count" class="caption-5"></span>
+          <select id="theme" class="caption-4" aria-label="Theme">
+            <option value="anna">Anna theme</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </div>
+      </footer>
+    </nav>
+
+    <main id="main" tabindex="-1">
+      <svg id="topo" aria-hidden="true" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1200 750"><path /></svg>
+      <section id="empty" class="view welcome" aria-labelledby="welcome-title">
+        <div class="welcome-inner">
+          <p id="welcome-eyebrow" class="caption-3 eyebrow">Your notes, connected</p>
+          <h1 id="welcome-title" class="heading-3 hero-text">Ask your notes anything.<br />Get answers with sources.</h1>
+          <p id="welcome-sub" class="body-3 muted hero-sub">Abyss links your notes, draws them as a graph, and answers questions using only what you wrote.</p>
+          <div class="welcome-actions">
+            <button id="welcome-primary" class="btn btn-primary button-md" type="button" data-icon="upload"><span class="label">Import Obsidian vault</span></button>
+            <button id="welcome-secondary" class="btn button-md" type="button" data-icon="plus">Write a note</button>
+          </div>
+          <ol class="steps">
+            <li class="card">
+              <span class="step-num caption-3">1</span>
+              <span class="title-4">Bring your notes</span>
+              <span class="body-6 muted">Drop an Obsidian vault .zip. Links, tags and folders stay intact.</span>
+            </li>
+            <li class="card">
+              <span class="step-num caption-3">2</span>
+              <span class="title-4">Capture as you go</span>
+              <span class="body-6 muted">Paste a messy thought. Abyss writes a clean note and links it.</span>
+            </li>
+            <li class="card">
+              <span class="step-num caption-3">3</span>
+              <span class="title-4">Ask and get sources</span>
+              <span class="body-6 muted">Answers cite the exact notes they came from.</span>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="editor-pane" class="view" hidden aria-label="Note">
+        <header class="note-head">
+          <span id="note-path" class="caption-4 muted"></span>
+          <div class="note-tools">
+            <label class="toggle caption-1">
+              <input type="checkbox" id="private" />
+              <span class="toggle-ui" aria-hidden="true"></span>
+              Private
+            </label>
+            <button id="delete" class="btn btn-quiet btn-danger button-sm" type="button" data-icon="trash"><span class="label">Delete</span></button>
+          </div>
+        </header>
+        <div class="note-scroll">
+          <article class="note-body">
+            <input id="title" class="heading-4" aria-label="Note title" autocomplete="off" />
+            <div id="editor"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="ask-view" class="view ai-view" hidden aria-labelledby="ask-title">
+        <div class="ai-inner">
+          <h1 id="ask-title" class="heading-4">Ask your notes</h1>
+          <p class="body-6 muted">Answers come only from your notes, and every answer lists the notes it used.</p>
+          <form id="ask-form" class="composer" novalidate>
+            <label class="field grow" data-icon="search">
+              <input id="ask-input" class="body-3" type="search" autocomplete="off" aria-label="Question"
+                     placeholder="What did I decide about annual pricing?" />
+            </label>
+            <button id="ask-submit" class="btn btn-primary button-md" type="submit" data-icon="sparkle">Ask</button>
+          </form>
+          <p id="ask-error" class="field-error caption-2" role="alert" hidden></p>
+          <div id="ask-result" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section id="capture-view" class="view ai-view" hidden aria-labelledby="capture-title">
+        <div class="ai-inner">
+          <h1 id="capture-title" class="heading-4">Capture</h1>
+          <p class="body-6 muted">Paste call notes, an idea or a rambling thought. Abyss turns it into a titled, tagged note linked to related notes.</p>
+          <form id="capture-form" class="capture-card card" novalidate>
+            <textarea id="capture-input" class="body-3" rows="9" aria-label="Text to capture"
+                      placeholder="Just got off a call with Arjun. He wants the Slack integration before the January renewal…"></textarea>
+            <div class="capture-foot">
+              <span class="caption-5 muted"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> to capture</span>
+              <button id="capture-submit" class="btn btn-primary button-md" type="submit" data-icon="capture">Capture note</button>
+            </div>
+          </form>
+          <p id="capture-error" class="field-error caption-2" role="alert" hidden></p>
+        </div>
+      </section>
+
+      <section id="graph-view" class="view" hidden aria-label="Knowledge graph">
+        <div id="graph-canvas"></div>
+        <div class="graph-bar card">
+          <label class="field" data-icon="search">
+            <input id="graph-filter" class="body-6" type="search" placeholder="#tag, path:folder or title" aria-label="Filter graph" />
+          </label>
+          <label class="toggle caption-1">
+            <input type="checkbox" id="graph-orphans" checked />
+            <span class="toggle-ui" aria-hidden="true"></span>
+            Orphans
+          </label>
+          <button id="graph-fit" class="btn btn-quiet button-sm" type="button">Fit</button>
+          <details id="graph-settings">
+            <summary class="btn btn-quiet button-sm">Settings</summary>
+            <div class="groups-pop card settings-pop">
+              <p class="caption-3 section-label">Display</p>
+              <label class="slider caption-1">Node size <input id="set-nodeSize" type="range" min="0.6" max="2" step="0.1" /></label>
+              <label class="slider caption-1">Link thickness <input id="set-linkWidth" type="range" min="0.5" max="3" step="0.1" /></label>
+              <label class="slider caption-1">Show labels from zoom <input id="set-labelZoom" type="range" min="0.5" max="3" step="0.1" /></label>
+              <label class="toggle caption-1"><input type="checkbox" id="set-ghosts" /><span class="toggle-ui" aria-hidden="true"></span>Unwritten notes</label>
+              <p class="caption-3 section-label">Forces</p>
+              <label class="slider caption-1">Repel <input id="set-repel" type="range" min="10" max="300" step="5" /></label>
+              <label class="slider caption-1">Link distance <input id="set-distance" type="range" min="10" max="120" step="2" /></label>
+              <label class="slider caption-1">Pull to centre <input id="set-center" type="range" min="0" max="0.3" step="0.01" /></label>
+              <button id="set-reset" class="btn btn-quiet button-sm" type="button">Reset to defaults</button>
+            </div>
+          </details>
+          <details id="groups">
+            <summary class="btn btn-quiet button-sm">Colour groups</summary>
+            <div class="groups-pop card">
+              <p class="caption-5 muted">First matching rule wins.</p>
+              <div id="group-rows"></div>
+              <button id="add-group" class="btn btn-quiet button-sm" type="button" data-icon="plus">Add group</button>
+            </div>
+          </details>
+        </div>
+        <span id="graph-count" class="graph-count caption-4"></span>
+        <p class="graph-hint caption-5">Drag a node onto another to link them. Click a node to open it. Dashed nodes are links to notes you have not written yet.</p>
+      </section>
+
+      <p id="status" class="caption-5" role="status"></p>
+    </main>
+
+    <aside id="links" aria-label="Note links" hidden>
+      <section class="panel-block">
+        <div class="panel-head">
+          <h2 class="caption-3 section-label">Local graph</h2>
+          <select id="local-depth" class="caption-4" aria-label="Local graph depth">
+            <option value="1">Depth 1</option>
+            <option value="2">Depth 2</option>
+            <option value="3">Depth 3</option>
+          </select>
+        </div>
+        <div id="local-graph" class="card"></div>
+      </section>
+      <section class="panel-block">
+        <h2 class="caption-3 section-label">Backlinks</h2>
+        <ul id="backlinks" class="link-list"></ul>
+      </section>
+      <section class="panel-block">
+        <h2 class="caption-3 section-label">Links</h2>
+        <ul id="outlinks" class="link-list"></ul>
+      </section>
+      <p class="caption-5 muted panel-hint">Drag a note from the list into the text to link it. <kbd>Ctrl</kbd> + click a link to open it.</p>
+    </aside>
+  </body>
+</html>
