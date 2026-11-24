@@ -141,3 +141,54 @@ test("oversized note is rejected before writing", async () => {
   await assert.rejects(s.save(newNote({ title: "Big", body: "x".repeat(61_000) })), /too large/);
   assert.equal(s.entries().length, 0);
 });
+
+// The live Anna host rejected the "only if it doesn't exist yet" guard (if_match: "") for new
+// keys, which looked like an edit conflict ("changed somewhere else") on every new note.
+const rejecting = (rejectIf) => {
+  const kv = memKv();
+  return { ...kv, set: async (a) => {
+    if (a.if_match !== undefined && rejectIf(a.if_match)) throw Object.assign(new Error("precondition failed"), { code: -32023 });
+    return kv.set(a);
+  } };
+};
+
+test("a host that rejects the empty if_match guard still saves new notes and shards", async () => {
+  const kv = rejecting((m) => m === "");
+  const s = createStore(kv);
+  await s.load();
+  const n = newNote({ title: "Project Task Assignments" });
+  await s.save(n);
+  await s.save({ ...n, body: "edited" });
+  const r = createStore(kv);
+  await r.load();
+  assert.deepEqual(r.entries().map((e) => e.title), ["Project Task Assignments"]);
+  assert.equal((await r.get(n.id)).body, "edited");
+});
+
+test("a host that rejects every if_match guard still saves, updates and imports", async () => {
+  const kv = rejecting(() => true);
+  const s = createStore(kv);
+  await s.load();
+  const a = newNote({ title: "A" });
+  await s.save(a);
+  await s.save({ ...a, body: "edited" });
+  assert.deepEqual(await s.saveAll([newNote({ title: "B" }), newNote({ title: "C" })]), []);
+  const r = createStore(kv);
+  await r.load();
+  assert.deepEqual(r.entries().map((e) => e.title).sort(), ["A", "B", "C"]);
+});
+
+test("with a rejecting host, a note really changed elsewhere is still reported as a conflict", async () => {
+  const base = memKv();
+  const kv = { ...base, set: async (a) => {
+    if (a.if_match !== undefined) throw Object.assign(new Error("precondition failed"), { code: -32023 });
+    return base.set(a);
+  } };
+  const a = createStore(kv), b = createStore(kv);
+  await a.load();
+  const n = newNote({ title: "Shared" });
+  await a.save(n);
+  await b.load();
+  await b.save({ ...n, body: "from the other writer" });
+  await assert.rejects(a.save({ ...n, body: "stale" }), ConflictError);
+});

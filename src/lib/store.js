@@ -69,13 +69,21 @@ export function createStore(kv) {
       for (let attempt = 0; ; attempt++) {
         const sh = shards.get(s);
         const next = apply(sh.entries);
+        // Guarded attempts first; the last one is unguarded so a host that mishandles
+        // if_match (the live one rejected "") can never block saving. Each retry re-reads the
+        // shard and re-applies our change, so another writer's entries are not lost.
+        const unguarded = attempt >= INDEX_RETRIES;
         try {
           if (bytes(next) > MAX_SHARD_BYTES) throw new Error("Vault too large for this version of Abyss (about 4,000 notes max)");
-          const r = await kv.set({ key: INDEX_PREFIX + s, value: next, if_match: guard(sh.etag, sh.exists) });
+          const r = await kv.set({ key: INDEX_PREFIX + s, value: next, ...(!unguarded && { if_match: guard(sh.etag, sh.exists) }) });
           shards.set(s, { entries: next, etag: r.etag ?? null, exists: true });
           break;
         } catch (e) {
-          if (isConflict(e) && attempt < INDEX_RETRIES) { await readShard(s); continue; }
+          if (isConflict(e) && attempt < INDEX_RETRIES) {
+            await readShard(s);
+            if (!shards.get(s).exists) attempt = INDEX_RETRIES - 1;   // nothing there to conflict with: retry unguarded
+            continue;
+          }
           shards.set(s, { ...sh, entries: next });   // memory only; see above
           failure ??= e;
           break;
@@ -91,17 +99,31 @@ export function createStore(kv) {
     // "untouched since import" is updated === imported, so a normal save must never
     // land on the import's exact millisecond.
     if (!imported && t === note.imported) t = new Date(Date.parse(t) + 1).toISOString();
+    // every save must stamp a strictly later `updated` than the version it replaces: that stamp is
+    // what tells a real edit conflict from a host that rejects the if_match guard
+    const prev = flat.find((e) => e.id === note.id)?.updated;
+    if (prev && t <= prev) t = new Date(Date.parse(prev) + 1).toISOString();
     const saved = { ...note, v: SCHEMA_V, updated: t, ...(imported && { imported: t }) };
     if (bytes(saved) > MAX_NOTE_BYTES) {
       throw new Error(`Note "${note.title}" is too large (over ${MAX_NOTE_BYTES / 1000} KB)`);
     }
     const entry = flat.find((e) => e.id === note.id);
+    const key = NOTE_PREFIX + note.id;
     let r;
     try {
-      r = await kv.set({ key: NOTE_PREFIX + note.id, value: saved, if_match: guard(entry?.etag, !!entry) });
+      r = await kv.set({ key, value: saved, if_match: guard(entry?.etag, !!entry) });
     } catch (e) {
-      if (isConflict(e)) throw new ConflictError(`"${note.title}" changed somewhere else. Reload to get the latest version.`);
-      throw e;
+      if (!isConflict(e)) throw e;
+      console.warn("Abyss: guarded save rejected, checking for a real conflict:", e.message);
+      // A new note has a fresh id, so nothing can conflict with it. For an existing note it is
+      // a real conflict only if the stored note changed since we last saved it.
+      if (entry) {
+        const cur = (await kv.get({ key })).value;
+        if (cur && cur.updated !== entry.updated) {
+          throw new ConflictError(`"${note.title}" changed somewhere else. Reload to get the latest version.`);
+        }
+      }
+      r = await kv.set({ key, value: saved });   // verified unchanged: write without the guard
     }
     Object.assign(note, { v: SCHEMA_V, updated: saved.updated, imported: saved.imported ?? null });
     return entryOf(saved, r.etag ?? null);
