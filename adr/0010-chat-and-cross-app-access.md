@@ -49,3 +49,17 @@ Users want Anna chat to search, read, create and append to their notes, and othe
 ### Risks
 - The platform may not tell the Executa *which* app made a tool call (PRD open question). `ponytail:` until it does, another app going through Anna's agent looks like chat and is governed by `chatAccess`; the private flag is the hard guarantee. Tighten when caller identity is exposed.
 - Unknown whether chat-invoked tool calls count as Qualified App Runs → primary MAU path stays in the UI (Capture/Ask/Visualize)
+
+## Implementation notes (milestone 2, 2026-11-25)
+
+Built: the `abyss-tools` Executa (`executas/abyss-tools`) with `search_notes`, `read_note`, `create_note` and `append_note`, and a Privacy dialog in the UI (chat access on by default, other apps off by default). All access rules live in `src/lib/chattools.js`, shared with the UI through copies synced by `npm run sync` (a test fails if they drift).
+
+Checked in the `anna-app dev` harness, calling the tool through `anna.tools.invoke`: it reads notes the UI wrote, notes it creates appear in the UI, turning chat access off makes every tool refuse with a clear message, and a note marked Private is invisible to search, read and append (the answer is identical to a missing note, so its existence doesn't leak). Create over a private title picks a free title instead.
+
+**Not verified, needs the real platform:**
+- That Anna's main chat agent discovers and calls these tools on its own. The harness only exercises them from the UI.
+- That the production host grants an Executa the app's own storage when chat (rather than the app window) invokes it. The CLI notes say plugin app scope exists only in a host attested form (`app_scope_ctx`); the harness allows it without that.
+- Caller identity: the tool accepts an optional `context.caller` and treats anything other than chat as another app, which the sharing setting then gates. Until the host supplies it, every call counts as chat.
+- The dev tool id `tool-dev-abyss-tools` in `manifest.json` and `executa.json` is replaced by a server assigned id when published.
+
+Search is keyword and tag based (no embeddings in the Executa yet). Not built yet: Talk mode, and opening a specific note from another app with `apps.launch`.

@@ -57,6 +57,7 @@
           <button id="import" class="btn btn-quiet button-sm" type="button" data-icon="upload" title="Import an Obsidian vault as a .zip, or drop it anywhere">Import</button>
           <button id="export" class="btn btn-quiet button-sm" type="button" data-icon="download" title="Download every note as a .zip for Obsidian">Export</button>
           <input id="import-file" type="file" accept=".zip,application/zip" hidden />
+          <button id="open-privacy" class="btn btn-quiet button-sm" type="button" data-icon="lock" title="Choose what Anna chat and other apps can reach">Privacy</button>
           <button id="replay-tour" class="btn btn-quiet button-sm" type="button" data-icon="question" title="Replay the quick tour">Tutorial</button>
           <button id="import-github" class="btn btn-quiet button-sm" type="button" data-icon="github" title="Import a public GitHub repository of markdown notes">GitHub</button>
         </div>
@@ -224,5 +225,16 @@
       </section>
       <p class="caption-5 muted panel-hint">Drag a note from the list into the text to link it. <kbd>Ctrl</kbd> + click a link to open it.</p>
     </aside>
+    <dialog id="privacy" class="card" aria-labelledby="privacy-title">
+      <form method="dialog" class="privacy-form">
+        <h2 id="privacy-title" class="title-1">Privacy</h2>
+        <p class="body-6 muted">Choose what can reach your notes from outside Abyss. Notes you mark Private are never shared, whatever you choose here.</p>
+        <label class="toggle-row"><span><span class="title-4">Anna chat can use my notes</span><span class="caption-2 muted">Anna's assistant can search, read, create and add to your notes, and cite them.</span></span>
+          <span class="toggle"><input type="checkbox" id="priv-chat" /><span class="toggle-ui" aria-hidden="true"></span></span></label>
+        <label class="toggle-row"><span><span class="title-4">Let other apps use my notes</span><span class="caption-2 muted">Other Anna apps can open and use your notes through the assistant. Off unless you turn it on.</span></span>
+          <span class="toggle"><input type="checkbox" id="priv-apps" /><span class="toggle-ui" aria-hidden="true"></span></span></label>
+        <div class="tour-actions"><span class="tour-spacer"></span><button class="btn btn-primary button-sm" value="close">Done</button></div>
+      </form>
+    </dialog>
   </body>
 </html>

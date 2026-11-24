@@ -8,8 +8,9 @@
     "watch": "vite build --watch",
     "dev": "anna-app dev",
     "test": "node --test \"test/*.test.js\"",
-    "validate": "vite build && anna-app validate --strict",
-    "e2e": "node scripts/demo-flow.mjs"
+    "validate": "npm run sync && vite build && anna-app validate --strict",
+    "e2e": "node scripts/demo-flow.mjs",
+    "sync": "node scripts/sync-executa.mjs"
   },
   "devDependencies": {
     "vite": "^8.3.8"

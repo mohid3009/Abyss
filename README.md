@@ -50,6 +50,7 @@ Most notes become a write only graveyard: disconnected, hard to search, and invi
 | **Ask** | Retrieval with embeddings, then an answer that cites only notes that were really provided. Falls back gracefully and never ends in an error screen |
 | **Capture** | Turns messy text into a clean note with a title, tags and links to related notes. If the model is unavailable, your text is saved unchanged |
 | **Graph** | Whole vault and local graph with depth control, filters (`#tag`, `path:folder`), colour groups, orphan toggle, force and display settings, and drag to link |
+| **Anna chat access** | The `abyss-tools` Executa lets Anna's assistant search, read, create and append notes. On for chat by default, off for other apps until you allow it, and notes marked Private are never exposed. Set under **Privacy** in the sidebar |
 | **Interface** | Light (sand and charcoal) and dark themes that can follow Anna, a collapsible sidebar (`Ctrl+B`), a first run tutorial, and reduced motion support |
 
 ## Quick start
@@ -106,6 +107,7 @@ The reasoning behind each choice is written up as architecture decision records 
 | `src/lib/graphdata.js`, `src/graph.js`, `src/graphview.js` | Graph data, canvas rendering, settings and drag to link |
 | `src/lib/semantic.js`, `ai.js`, `src/aiview.js` | Embedding index, Ask and Capture pipelines, and their UI |
 | `src/main.js`, `editor.js`, `tour.js`, `demo.js` | App shell, editor, tutorial, demo mode |
+| `executas/abyss-tools/`, `src/lib/chattools.js` | The tools and access rules for Anna chat (`npm run sync` copies the shared logic into the Executa) |
 | `adr/`, `abyss.prd.md`, `abyss-usecase-story.md` | Decisions, requirements and user stories |
 | `test/`, `scripts/demo-flow.mjs` | Unit tests, and an end to end script for the demo flow |
 
@@ -122,7 +124,7 @@ Unit tests cover storage and index repair, link and tag parsing, rename rewritin
 | Milestone | Outcome | Status |
 |---|---|---|
 | 1. Core vault | Import or write linked notes, capture and ask with citations, explore the graph | Built |
-| 2. Abyss everywhere | Anna chat and other apps can search, read, create and append notes; private notes stay private | In progress |
+| 2. Abyss everywhere | Anna chat and other apps can search, read, create and append notes; private notes stay private | Tools and Privacy settings built; needs a check on the real Anna host. Talk mode not started |
 | 3. Visualize | Turn notes into editable flow graphs and infographics | Planned |
 | 4. Scheduled notifications | Email reminders linked to notes | Planned |
 | 5. Make it yours | Themes, note templates, visual customisation | Planned |

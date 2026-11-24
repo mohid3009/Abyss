@@ -289,6 +289,14 @@ function setSidebar(collapsed, { save = true } = {}) {
 }
 
 function wire() {
+  // Privacy: what Anna chat / other apps may reach (enforced inside the abyss-tools Executa).
+  $("open-privacy").addEventListener("click", () => {
+    $("priv-chat").checked = settings.chatAccess !== false;   // default on
+    $("priv-apps").checked = settings.sharing === true;       // default off
+    $("privacy").showModal();
+  });
+  $("priv-chat").addEventListener("change", (e) => { settings.chatAccess = e.target.checked; saveSettings(); });
+  $("priv-apps").addEventListener("change", (e) => { settings.sharing = e.target.checked; saveSettings(); });
   $("replay-tour").addEventListener("click", startTour);
   $("sidebar-toggle").addEventListener("click", () => setSidebar(!document.body.classList.contains("collapsed")));
   document.addEventListener("keydown", (e) => {

@@ -1,0 +1,9 @@
+{
+  "slug": "abyss-tools",
+  "name": "abyss-tools",
+  "version": "0.1.0",
+  "executa_type": "tool",
+  "description": "Search, read, create and append Abyss notes from Anna chat. Private notes are never exposed.",
+  "tool_id": "tool-dev-abyss-tools",
+  "type": "node"
+}

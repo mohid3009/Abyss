@@ -476,3 +476,11 @@ body.collapsed #sidebar-toggle .icon svg { transform: scaleX(-1); }
 /* ?still: freeze all motion, used for screenshots */
 html.still *, html.still *::before, html.still *::after { animation: none !important; transition: none !important; }
 html.still #splash { display: none; }
+
+/* privacy dialog */
+#privacy { width: min(440px, calc(100vw - 24px)); padding: var(--s-300); color: var(--fg); border: 1px solid var(--line); background: var(--bg); }
+#privacy::backdrop { background: rgb(0 0 0 / 0.5); }
+.privacy-form { display: grid; gap: var(--s-200); }
+.toggle-row { display: flex; justify-content: space-between; align-items: center; gap: var(--s-200); cursor: pointer; }
+.toggle-row > span:first-child { display: grid; gap: var(--s-25); }
+body.collapsed #open-privacy .label { opacity: 0; }
