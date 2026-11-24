@@ -38,10 +38,5 @@
     ],
     "seed_storage": {},
     "user_id": 1
-  },
-  "required_executas": [
-    {
-      "tool_id": "tool-dev-abyss-tools"
-    }
-  ]
+  }
 }

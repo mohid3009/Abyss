@@ -50,7 +50,7 @@ Most notes become a write only graveyard: disconnected, hard to search, and invi
 | **Ask** | Retrieval with embeddings, then an answer that cites only notes that were really provided. Falls back gracefully and never ends in an error screen |
 | **Capture** | Turns messy text into a clean note with a title, tags and links to related notes. If the model is unavailable, your text is saved unchanged |
 | **Graph** | Whole vault and local graph with depth control, filters (`#tag`, `path:folder`), colour groups, orphan toggle, force and display settings, and drag to link |
-| **Anna chat access** | The `abyss-tools` Executa lets Anna's assistant search, read, create and append notes. On for chat by default, off for other apps until you allow it, and notes marked Private are never exposed. Set under **Privacy** in the sidebar |
+| **Anna chat access** | The `abyss-tools` Executa lets Anna's assistant search, read, create and append notes. On for chat by default, off for other apps until you allow it, and notes marked Private are never exposed. Included in this repository but not part of the first published version (the Privacy panel is hidden until it ships) |
 | **Interface** | Light (sand and charcoal) and dark themes that can follow Anna, a collapsible sidebar (`Ctrl+B`), a first run tutorial, and reduced motion support |
 
 ## Quick start
