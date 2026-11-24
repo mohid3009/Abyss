@@ -5,5 +5,10 @@
   "executa_type": "tool",
   "description": "Search, read, create and append Abyss notes from Anna chat. Private notes are never exposed.",
   "tool_id": "tool-dev-abyss-tools",
-  "type": "node"
+  "type": "node",
+  "distribution": {
+    "type": "npm",
+    "package_name": "abyss-notes-executa",
+    "executable_name": "abyss-notes-executa"
+  }
 }

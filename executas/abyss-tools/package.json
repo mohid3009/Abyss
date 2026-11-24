@@ -1,8 +1,25 @@
 {
-  "name": "tool-dev-abyss-tools",
+  "name": "abyss-notes-executa",
   "version": "0.1.0",
-  "description": "Abyss notes for Anna chat",
+  "description": "Abyss notes for Anna chat: search, read, create and append notes. Private notes are never exposed.",
   "type": "module",
-  "bin": { "tool-dev-abyss-tools": "./plugin.mjs" },
-  "executa": { "tool_id": "tool-dev-abyss-tools" }
+  "license": "UNLICENSED",
+  "bin": {
+    "abyss-notes-executa": "./plugin.mjs"
+  },
+  "files": [
+    "plugin.mjs",
+    "lib"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mohid3009/Abyss.git",
+    "directory": "executas/abyss-tools"
+  },
+  "executa": {
+    "tool_id": "tool-dev-abyss-tools"
+  }
 }
