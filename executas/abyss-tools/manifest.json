@@ -1,0 +1,80 @@
+{
+  "display_name": "Abyss notes",
+  "version": "0.1.0",
+  "description": "Search, read, create and append the user's Abyss notes. Private notes are never returned or changed.",
+  "host_capabilities": [],
+  "tools": [
+    {
+      "name": "search_notes",
+      "description": "Search the user's Abyss notes by words in the title, tags or text. Returns titles, tags and short snippets.",
+      "parameters": [
+        {
+          "name": "query",
+          "type": "string",
+          "description": "Words to look for.",
+          "required": true
+        },
+        {
+          "name": "limit",
+          "type": "number",
+          "description": "Maximum results (default 5, at most 20).",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "read_note",
+      "description": "Read one Abyss note by its title.",
+      "parameters": [
+        {
+          "name": "title",
+          "type": "string",
+          "description": "Exact note title (case does not matter).",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "create_note",
+      "description": "Create a new Abyss note. Use [[Title]] in the body to link other notes.",
+      "parameters": [
+        {
+          "name": "title",
+          "type": "string",
+          "description": "Title of the new note.",
+          "required": true
+        },
+        {
+          "name": "body",
+          "type": "string",
+          "description": "Markdown body.",
+          "required": false
+        },
+        {
+          "name": "tags",
+          "type": "array",
+          "description": "Short tags, without #.",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "append_note",
+      "description": "Append text to an existing Abyss note.",
+      "parameters": [
+        {
+          "name": "title",
+          "type": "string",
+          "description": "Title of the note to add to.",
+          "required": true
+        },
+        {
+          "name": "text",
+          "type": "string",
+          "description": "Text to append.",
+          "required": true
+        }
+      ]
+    }
+  ]
+}
