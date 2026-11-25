@@ -75,3 +75,20 @@ test("access rules hold over the protocol: other apps off by default, chat off b
     assert.equal((await call("read_note", { title: "Plan" })).access_denied, true);
   } finally { h.stop(); }
 });
+
+test("called as a command, it answers at once instead of waiting on stdin", async () => {
+  const run = (args) => new Promise((resolve) => {
+    const c = spawn(process.execPath, [`${root}executas/abyss-tools/plugin.mjs`, ...args], { stdio: ["pipe", "pipe", "inherit"] });
+    let out = "";
+    c.stdout.on("data", (d) => { out += d; });
+    const timer = setTimeout(() => { c.kill(); resolve({ hung: true }); }, 4000);
+    c.on("close", (code) => { clearTimeout(timer); resolve({ code, out }); });
+  });
+  const r = await run(["search_notes", 'query=meeting']);
+  assert.equal(r.hung, undefined, "must not hang");
+  assert.equal(r.code, 2);
+  assert.equal(JSON.parse(r.out).success, false);
+  const d = await run(["describe"]);
+  assert.equal(d.code, 0);
+  assert.equal(JSON.parse(d.out).tools.length, 4);
+});

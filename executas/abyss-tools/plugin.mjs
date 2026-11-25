@@ -92,6 +92,15 @@ function handleLine(line) {
   } else if (env.method) void dispatch(env);
 }
 
+// Called as a command (`tool-id search_notes query=...`, e.g. by an agent's shell)? This tool
+// needs the host's storage over the stdin protocol and has no command line mode. Answer at once
+// instead of waiting on stdin until the caller times out.
+if (process.argv.length > 2) {
+  if (process.argv[2] === "describe") { console.log(JSON.stringify(MANIFEST, null, 2)); process.exit(0); }
+  console.log(JSON.stringify({ success: false, error: "abyss-tools has no command line mode: it runs inside Anna's tool host (JSON-RPC over stdin) because it needs the host's storage access. Call it as a tool, not through a shell." }));
+  process.exit(2);
+}
+
 createInterface({ input: process.stdin }).on("line", (raw) => {
   const line = raw.trim();
   if (!line) return;
